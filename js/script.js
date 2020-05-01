@@ -1,124 +1,128 @@
 "use strict"
-let start = document.getElementById('start'); //Начать расчет
-    budgetVal = document.getElementsByClassName('budget-value'); //Доход
-    dayBudgetVal = document.getElementsByClassName('daybudget-value'); //Бюджет на 1 день
-    levelVal = document.getElementsByClassName('level-value'); //Уровень дохода
-    expensesVal = document.getElementsByClassName('expenses-value'); //Обязательные расходы
-    optExpenesVal = document.getElementsByClassName('optionalexpenses-value'); //Возможные траты
-    incomeVal = document.getElementsByClassName('income-value'); //Дополнительный доход
-    monthSavingsVal = document.getElementsByClassName('monthsavings-value'); //Накопления за 1 месяц
-    yearSavingsVal = document.getElementsByClassName('yearsavings-value'); //Накопления за 1 год
-    input = document.getElementsByClassName('expenses-item'); //Поля input 
+//We get objects from the page using:
+let start = document.getElementById('start');
+    budgetVal = document.getElementsByClassName('budget-value');
+    dayBudgetVal = document.getElementsByClassName('daybudget-value');
+    levelVal = document.getElementsByClassName('level-value');
+    expensesVal = document.getElementsByClassName('expenses-value');
+    optExpenesVal = document.getElementsByClassName('optionalexpenses-value');
+    incomeVal = document.getElementsByClassName('income-value');
+    monthSavingsVal = document.getElementsByClassName('monthsavings-value');
+    yearSavingsVal = document.getElementsByClassName('yearsavings-value');
+    input = document.getElementsByClassName('expenses-item');
 
-    buttons = document.getElementsByTagName('button'); //Все buttons
-    expBtn = (buttons[0]); // Утвердить (1)
-    optBtn = (buttons[1]); //Утвердить (2)
-    countBtn = (buttons[2]); //Рассчитать
+    buttons = document.getElementsByTagName('button');
+    expBtn = (buttons[0]);
+    optBtn = (buttons[1]); 
+    countBtn = (buttons[2]);
 
-    optExItem = document.querySelectorAll('.optionalexpenses-item'); //Поля ввода необяз. расходов
+    optExItem = document.querySelectorAll('.optionalexpenses-item');
 
-    chooseInc = document.querySelector('.choose-income'); // Поле возможного дохода
-    checkBox = document.querySelector('#savings'); //Чек бокс накоплений
-    inputSum = document.querySelector('.choose-sum'); //Поле ввода "Сумма"
-    inputPerc = document.querySelector('.choose-percent'); //Полее ввода "Процент"
-    year = document.querySelector('.year-value'); //Поле ввода "год"
-    month = document.querySelector('.month-value'); //Поле ввода "месяц"
-    day = document.querySelector('.day-value'); //Поле ввода "день"
+    chooseInc = document.querySelector('.choose-income');
+    checkBox = document.querySelector('#savings');
+    inputSum = document.querySelector('.choose-sum');
+    inputPerc = document.querySelector('.choose-percent');
+    year = document.querySelector('.year-value');
+    month = document.querySelector('.month-value');
+    day = document.querySelector('.day-value');
 
-let money, time; //переменные вынесены за функцию для доступа к ним
-function start() { //Сбор информации по бюджету
-	money = +prompt("Ваш бюджет на месяц?", ""); 
-	time = prompt("Введите дату в формате YYYY-MM-DD", "");
+//Move variables to the global execution area:
+let money, time;
+//We will learn budget information from the user:
+function start() {
+	money = +prompt("What is your monthly budget?", ""); 
+	time = prompt("Enter date in format YYYY-MM-DD", "");
 
 	while(isNaN(money) || money == "" || money == null) {
-		money = +prompt("Ваш бюджет на месяц?", ""); 
+		money = +prompt("What is your monthly budget?", ""); 
 	}
 }
 start();
 
+//Create our main object
 let appData={ 
     budget: money,
     timeData: time,
-    expenses: {}, //обязательные расходы
-    optionalExpenses: {}, //не обязательные расходы 
-    income: [], //массив данных с доп. доходом  (оставляем пока пустым)
+    expenses: {},
+    optionalExpenses: {},
+    income: [],
 	savings: true,
 	chooseExpenses: function() {
 		for (let i = 1; i < 3; i++) {
-			let a = prompt("Введите обязательную статью расходов в этом месяце", ''),
-				b = prompt("Во сколько обойдется?", '');
+			let a = prompt("Enter a required cost item this month", ''),
+				b = prompt("How much will it cost?", '');
 		
 			if ( (typeof(a))=== "string" && a != null && b != null && a != "" && b != "" && a.length < 50 ) {
 				console.log("done");
 				appData.expenses[a] = b;
 			} else {
-				alert("Ошибка при вводе данных, повторите попытку!"),
+				alert("Error entering data, try again!"),
 				console.log("error!"),
 				i--;
 			}
 		}
 	},
-	detectDayBudget: function() { // Расчет дневного бюджета
+	detectDayBudget: function() { // Daily budget calculation
 		appData.moneyPerDay = (appData.budget / 30).toFixed(1);
 		alert("Ежедневный бютжет: " + appData.moneyPerDay);
 	},
 
-	checkSavings: function() { //расчет дохода в месяц с депозита
+	checkSavings: function() { //Calculation of income per month from a deposit
 		if (appData.savings = true) {
-			let save = +prompt("Какова сумма накоплений?"),
-				percent = +prompt("Под какой процент?");
+			let save = +prompt("What is the amount of savings?"),
+				percent = +prompt("What percentage?");
 
 			appData.monthIncome = save/100/12*percent;
 			alert("Доход в месяц с вашего депозита: " +appData.monthIncome);
 		}
 	},
 
-	detectLevel: function() { //определение уровеня достатка
+	detectLevel: function() { //Determining the level of wealth
 		if(appData.moneyPerDay < 100) {
-			console.log("Минимальный уровень достатка");
+			console.log("Minimum level of wealth");
 		} else if (appData.moneyPerDay > 100 && appData.moneyPerDay < 2000) {
-			console.log("Средний уровень достатка");
+			console.log("Average income");
 		} else if (appData.moneyPerDay > 2000) {
-			console.log("Высокий уровень достатка"); 
+			console.log("High level of wealth"); 
 		} else {
-			console.log("Произошла ошибка");
+			console.log("An error has occurred");
 		}
 	},
-	chooseOptExpense: function() { //Способ FOR
+	chooseOptExpense: function() { //Optional expenses
 		for (let i = 1; i < 4; i++) {
-			let	a = +prompt("Статья необязательных расходов?");
+			let	a = +prompt("An item of optional expenses?");
 	
 			if (a != null && a != "") {
 				console.log("done", i);
 				appData.optionalExpenses[i] = a;
 			} else {
-				alert("Ошибка при вводе данных, повторите попытку!"),
+				alert("Error entering data, try again!"),
 				console.log("error!", i),
 				i--;
 			}	
 		}
 	},
-	chooseIncome: function() { //Доп. доходы
-		let items = prompt("Что принесёт дополнительный доход? (Перечислите через запятую)", "");
+	chooseIncome: function() { //Additional income
+		let items = prompt("What brings additional income? (Comma list)", "");
 		
 		while(!isNaN(items) || items == "" || items == null) {
-			items = prompt("Что принесёт дополнительный доход? (Перечислите через запятую)", "");
+			items = prompt("What will bring additional income? (List with a comma)", "");
 		}
 		appData.income = items.split(', ');
 
-		let subItems = prompt("Может что-то еще?", "");
+		let subItems = prompt("Maybe something else?", "");
 
 		while(!isNaN(subItems) || subItems == "" || subItems == null) {
-			subItems = prompt("Может что-то еще?", "");
+			subItems = prompt("Maybe something else?", "");
 			appData.income.push(subItems);
 		}
 		appData.income.sort();
 		appData.income.forEach(function(item, a) {
-			alert((a + 1) + ": Способы доп. заработка: " + item);
+			alert((a + 1) + ": Additional methods earnings: " + item);
 		});
 	},
 	showData: function() {
-		console.log("Наша программа включает в себя данные: ");
+		console.log("Our program includes data: ");
 		for(let key in appData) {
 			console.log(key);
 		}
